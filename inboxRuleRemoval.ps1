@@ -16,7 +16,8 @@ Connect-MgGraph -TenantId $TenantId -ClientSecretCredential $ClientSecretCredent
 ####
 # The Delete call requires the Id of the inbox rule, to get that we need to make a Get request for the rule first.
 # We ask the script executor for 1. the user's e-mail address 2. the display name of the rule.
-# Can then send the Delete call. 
+# Can then send the Delete call.
+# Requires the application permission MailboxSettings.ReadWrite
 
 # Ask script executor for E-mail Address of the impacted user.
 $impactedUserEmail = Read-Host -Prompt "Enter the impacted user's E-mail address (not case sensitive)"
