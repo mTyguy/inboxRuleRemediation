@@ -13,7 +13,7 @@ $ClientSecretCredential = New-Object -TypeName System.Management.Automation.PSCr
 # Connect to Microsoft Graph Using the Tenant ID and Client Secret Credential
 Connect-MgGraph -TenantId $TenantId -ClientSecretCredential $ClientSecretCredential -NoWelcome
 
-####
+###
 # The Delete call requires the Id of the inbox rule, to get that we need to make a Get request for the rule first.
 # We ask the script executor for 1) the user's e-mail address 2) the display name of the rule.
 # Can then send the Delete call.
@@ -25,12 +25,12 @@ $impactedUserEmail = Read-Host -Prompt "Enter the impacted user's E-mail address
 # Ask script executor for Display Name of the inbox rule.
 $inboxruledisplayname = Read-Host -Prompt "Enter the Inbox Rule Display Name (case sensitive)"
 
-#Get Inbox Rule by User Principal Name & Display Name
+#Get Inbox Rule ID by User Principal Name & Display Name
 
-$getInboxRule = (invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/users/$impactedUserEmail/mailFolders/inbox/messageRules?`$filter=displayName eq '$inboxruledisplayname'" -OutputType PSObject).value
+$getInboxRuleId = (Invoke-MgGraphRequest -Method GET -Uri "https://graph.microsoft.com/v1.0/users/$impactedUserEmail/mailFolders/inbox/messageRules?`$filter=displayName eq '$inboxruledisplayname'" -OutputType PSObject).value.id
 
 # Set inbox rule Id to variable and then delete the inbox rule
-foreach ($_ in $getInboxRule.id) {(Invoke-MgGraphRequest -Method DELETE -Uri "https://graph.microsoft.com/v1.0/users/$impactedUserEmail/mailFolders/inbox/messageRules/$_")}
+Invoke-MgGraphRequest -Method DELETE -Uri "https://graph.microsoft.com/v1.0/users/$impactedUserEmail/mailFolders/inbox/messageRules/$getInboxRuleId"
 
 # End session, suppress output
 Disconnect-MgGraph | Out-Null
